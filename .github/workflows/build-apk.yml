@@ -10,15 +10,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build APK
-        uses: kimhuilim/html-to-apk-action@v1
+      - name: Build Web to APK
+        uses: subhamk/web-to-apk-action@v1
         with:
-          build-folder-path: "."
+          web-folder: "."
           app-name: "TMGame"
-          output-folder-path: "output/"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: TMGame-APK
-          path: output/*.apk
+          path: "**/*.apk"
