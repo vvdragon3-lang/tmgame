@@ -1,4 +1,5 @@
 name: Build Android APK
+
 on:
   push:
     branches: [ main, master ]
@@ -6,18 +7,32 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Build Web to APK
-        uses: subhamk/web-to-apk-action@v1
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
         with:
-          web-folder: "."
-          app-name: "TMGame"
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Create Webview Project
+        run: |
+          npm install -g cordova
+          cordova create myApp com.tmgame.app TMGame
+          cd myApp
+          rm -rf www/*
+          cp -r ../* www/ || true
+          cordova platform add android
+          cordova build android --release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: TMGame-APK
-          path: "**/*.apk"
+          path: myApp/platforms/android/app/build/outputs/apk/release/*.apk
